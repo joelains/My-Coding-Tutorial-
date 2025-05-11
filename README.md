@@ -1,10 +1,10 @@
 # My-Coding-Tutorial-
 How I coded
-# Requirements
+## Requirements
 - Linux (Ubuntu, Debian, or other)
 - Conda (Miniconda or Anaconda)
 - QIIME 2 (2025.04 release)
-- ## Step 1: Import Data
+## Step 1: Import Data
   Since each sample represents one patient, I needed to use a manifest file so that QIIME 2 could recognize each read separately. I created a tab-separated values (TSV) file with the sample IDs, absolute file paths to the fastq files, and the direction of the reads (forward or reverse). This information is required for the SingleEndFastqManifestPhred33V2 import format. I placed the fastq files in a folder located at the path where QIIME 2 is being run.
 
 qiime tools import \
