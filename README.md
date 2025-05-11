@@ -1,6 +1,6 @@
 # My-Coding-Tutorial-
 How I coded
-## Requirements
+# Requirements
 - Linux (Ubuntu, Debian, or other)
 - Conda (Miniconda or Anaconda)
 - QIIME 2 (2025.04 release)
@@ -13,7 +13,7 @@ qiime tools import \
   --output-path single-end-demux.qza \
   --input-format SingleEndFastqManifestPhred33V2
   
-  ## Step 2: Denoising with Deblur 
+#Step 2: Denoising with Deblur 
 Deblur uses sequence error profiles to distinguish sequencing errors from true biological sequences, producing high-quality amplicon sequence variants (ASVs). The first step in the pipeline is quality filtering:
 
   qiime quality-filter q-score \
@@ -35,7 +35,7 @@ Next, I denoised the sequences using the deblur denoise-16S method. I set the tr
 To continue using the outputs, I renamed the artifacts: 
   mv rep-seqs-deblur.qza rep-seqs.qza
   mv table-deblur.qza table.qza
-## Step 3: Feature Table and Merging Data
+# Step 3: Feature Table and Merging Data
 After denoising, I created visual summaries of the feature table and representative sequences:
 
 qiime feature-table summarize \
@@ -60,7 +60,7 @@ Because I used data from multiple datasets, I needed to merge the feature tables
   --i-data Crohnsrep-seqs.qza \
   --o-merged-data merged-rep-seqs.qza
   
-  ##Step 4: Generate a tree for phylogenetic diversity analyses 
+#Step 4: Generate a tree for phylogenetic diversity analyses 
 To perform phylogenetic diversity analysis, a rooted tree is required. I used the align-to-tree-mafft-fasttree pipeline to align sequences and generate both unrooted and rooted trees.
 
   qiime phylogeny align-to-tree-mafft-fasttree \
@@ -70,7 +70,7 @@ To perform phylogenetic diversity analysis, a rooted tree is required. I used th
   --o-tree unrooted-tree.qza \
   --o-rooted-tree rooted-tree.qza
 
-  ##Step 5: Alpha/Beta Diveristy Analysis
+#Step 5: Alpha/Beta Diveristy Analysis
 Before running diversity metrics, I checked the distribution of read counts per sample. Based on this, I filtered out samples with extremely high read counts (above 16,649):
 
   qiime feature-table filter-samples \
