@@ -3,9 +3,9 @@ How I coded
 ## Requirements
 - Linux (Ubuntu, Debian, or other)
 - Conda (Miniconda or Anaconda)
-- QIIME 2 (2024.2 release)
+- QIIME 2 (2025.04 release)
 - ## Step 1: Import Data
-  Because each of samples is one patient i must use a manfiest file in order for qiime2 to recongize each of the reads seperately. I must make a TSV table with the sample ID's, path to the directory in which qiime2 is being ran and the direction of the sequences (forward or revers) which is important for the SingleEndFastqManifestPhred33V2 command. I made a folder in the absolute path with those samples. 
+  Since each sample represents one patient, I needed to use a manifest file so that QIIME 2 could recognize each read separately. I created a tab-separated values (TSV) file with the sample IDs, absolute file paths to the fastq files, and the direction of the reads (forward or reverse). This information is required for the SingleEndFastqManifestPhred33V2 import format. I placed the fastq files in a folder located at the path where QIIME 2 is being run.
 
 qiime tools import \
   --type 'SampleData[SequencesWithQuality]' \
@@ -14,14 +14,14 @@ qiime tools import \
   --input-format SingleEndFastqManifestPhred33V2
   
   ## Step 2: Denoising with Deblur 
-  Deblur uses sequence error profiles to associate wrong sequences with true biological sequences, resulting in high-quality sequence variant data. First it will go through quality filtering process.
- 
+Deblur uses sequence error profiles to distinguish sequencing errors from true biological sequences, producing high-quality amplicon sequence variants (ASVs). The first step in the pipeline is quality filtering:
+
   qiime quality-filter q-score \
   --i-demux single-end-demux.qza \
   --o-filtered-sequences demux-filtered.qza \
   --o-filter-stats demux-filter-stats.qza
   
-  The second step is to denoise and use the Qiime deblur denoise-16S method, which requires a trim length. However, since each of the sequences in the samples is 301 we must keep it at 301 because all of the base pairs are important for the run. -p jobs-to-start 6 , reqired so the denoise process can be quicker than normal and save time for analysis. 
+Next, I denoised the sequences using the deblur denoise-16S method. I set the trim length to 301 bp to retain the full sequence length, which is necessary because all base pairs are important for my analysis. I also specified six jobs to speed up the denoising process.
   
   qiime deblur denoise-16S \
   --i-demultiplexed-seqs demux-filtered.qza \
@@ -32,11 +32,11 @@ qiime tools import \
   --o-table table-deblur.qza \
   --o-stats deblur-stats.qza
 
-  To continue using the artifacts for the feature table i ran this. 
+To continue using the outputs, I renamed the artifacts: 
   mv rep-seqs-deblur.qza rep-seqs.qza
   mv table-deblur.qza table.qza
 ## Step 3: Feature Table and Merging Data
-After the denoising step, I will create visual summaries of the data. 
+After denoising, I created visual summaries of the feature table and representative sequences:
 
 qiime feature-table summarize \
   --i-table table.qza \
@@ -46,8 +46,7 @@ qiime feature-table tabulate-seqs \
   --i-data rep-seqs.qza \
   --o-visualization rep-seqs.qzv
 
-  Since I got the data from different datasets, I must merge the feature tables and sequences to analyze their differences and relationships. Also, merged the metadata, in my case i just combined the most important factors and made sure i had sample ID and study.
-  
+Because I used data from multiple datasets, I needed to merge the feature tables and representative sequences to analyze differences and relationships across studies. I also merged metadata files, combining the most important fields and ensuring each sample had a unique ID and study label.  
 
   qiime feature-table merge \
   --i-tables GERDtable.qza \
@@ -62,8 +61,8 @@ qiime feature-table tabulate-seqs \
   --o-merged-data merged-rep-seqs.qza
   
   ##Step 4: Generate a tree for phylogenetic diversity analyses 
-  A rooted phylogenetic tree is required for diversity analysis. I'll be using a Mafft program to peform multiple sequnce alignment from our sequences from each of the samples in the merged-rep-seqs
-  
+To perform phylogenetic diversity analysis, a rooted tree is required. I used the align-to-tree-mafft-fasttree pipeline to align sequences and generate both unrooted and rooted trees.
+
   qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences merged-rep-seqs.qza \
   --o-alignment aligned-rep-seqs.qza \
@@ -72,14 +71,14 @@ qiime feature-table tabulate-seqs \
   --o-rooted-tree rooted-tree.qza
 
   ##Step 5: Alpha/Beta Diveristy Analysis
-  Before i run the analysis. I must check a few things i have to look at the distriubtion of the frequncy per samples there seems to be a great amount of cluster from around 0-16649 frequency per sample. So i adjust the frequency. 
-  
+Before running diversity metrics, I checked the distribution of read counts per sample. Based on this, I filtered out samples with extremely high read counts (above 16,649):
+
   qiime feature-table filter-samples \
   --i-table merged-table.qza \
   --p-max-frequency 16649 \
   --o-filtered-table table-no-high.qza
 
-  Then we must set sampling dpeth to a parameter 1.... This was chose because the sample number of sequences in the merged metadata is closest to the rest of higher sequence counts so the ones with least will be dropped from the analysis. 
+Next, I set a sampling depth for rarefaction. I chose 1256 because it balanced the inclusion of most samples while avoiding overly shallow sequences.
 
 qiime diversity core-metrics-phylogenetic \
   --i-phylogeny rooted-tree.qza \
@@ -88,8 +87,8 @@ qiime diversity core-metrics-phylogenetic \
   --m-metadata-file MergedMD.tsv \
   --output-dir diversity-core-metrics-phylogenetic
 
-  After commuting the diverstiy metrics we can explor the microbiom composition of the samples in the merged dataset. I'll focus on alpha diversity and by doing the faith PD and eveness
-  
+Finally, I explored microbial diversity by focusing on alpha diversity metrics like Faith's Phylogenetic Diversity and Pielou's Evenness:
+
   qiime diversity alpha-group-significance \
   --i-alpha-diversity diversity-core-metrics-phylogenetic/faith_pd_vector.qza \
   --m-metadata-file MergedMD.tsv \
