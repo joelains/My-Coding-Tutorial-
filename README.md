@@ -63,7 +63,7 @@ Because I used data from multiple datasets, I needed to merge the feature tables
   --i-data Crohnsrep-seqs.qza \
   --o-merged-data merged-rep-seqs.qza
   
-#Step 4: Generate a tree for phylogenetic diversity analyses 
+# Step 4: Generate a tree for phylogenetic diversity analyses 
 To perform phylogenetic diversity analysis, a rooted tree is required. I used the align-to-tree-mafft-fasttree pipeline to align sequences and generate both unrooted and rooted trees.
 
   qiime phylogeny align-to-tree-mafft-fasttree \
@@ -73,7 +73,7 @@ To perform phylogenetic diversity analysis, a rooted tree is required. I used th
   --o-tree unrooted-tree.qza \
   --o-rooted-tree rooted-tree.qza
 
-#Step 5: Alpha/Beta Diveristy Analysis
+# Step 5: Alpha/Beta Diversity Analysis
 Before running diversity metrics, I checked the distribution of read counts per sample. Based on this, I filtered out samples with extremely high read counts (above 16,649):
 
   qiime feature-table filter-samples \
