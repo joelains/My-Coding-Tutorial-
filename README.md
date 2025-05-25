@@ -100,4 +100,23 @@ qiime diversity alpha-group-significance \
   --i-alpha-diversity diversity-core-metrics-phylogenetic/evenness_vector.qza \
   --m-metadata-file MergedMD.tsv \
   --o-visualization evenness-group-significance.qzv
+
+Next, we'll explore the beta group significance using PERMANOVA, which tests the distance between samples within a group, such as different disease states (Crohn's v GERD). We will run the command p-pairwise parameter to determine the groups that are statistically different from each other.
+
+qiime diversity beta-group-significance \
+  --i-distance-matrix diversity-core-metrics-phylogenetic/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file MergedMD.tsv \
+  --m-metadata-column group \
+  --p-pairwise \
+  --o-visualization unweighted-unifrac-subject-group-significance.qzv
+
+  To better visualize the microbial community composition, we can use the emperor plot to explore principal coordinates plots. We will use the unweighted UniFrac to generate emperor plots. 
+
+qiime emperor plot \
+  --i-pcoa diversity-core-metrics-phylogenetic/unweighted_unifrac_pcoa_results.qza \
+  --m-metadata-file MergedMD.tsv \
+  --o-visualization unweighted-unifrac-emperor.qzv
   
+# Step 6: Taxonomic analysis
+  
+
