@@ -118,5 +118,28 @@ qiime emperor plot \
   --o-visualization unweighted-unifrac-emperor.qzv
   
 # Step 6: Taxonomic analysis
+Now we'll see the samples' taxonomic composition and relate it back to the metadata. Sadly, due a limited RAM memory, i used a pre-trained Naive Bayes by Greengenes 13_8 which have been trimmed to inlclude the v4 region (my sequences were v3-v4). Fortunately results were reliable. 
+wget -O 'gg-13-8-99-515-806-nb-classifier.qza' \
+  'https://moving-pictures-tutorial.readthedocs.io/en/latest/data/moving-pictures/gg-13-8-99-515-806-nb-classifier.qza'
+
+  qiime feature-classifier classify-sklearn \
+  --i-classifier gg-13-8-99-515-806-nb-classifier.qza \
+  --i-reads merged_seqs.qza \
+  --o-classification taxonomy.qza
+qiime metadata tabulate \
+  --m-input-file taxonomy.qza \
+  --o-visualization taxonomy.qzv
+
+Next, we can view the composition of our samples by generating bar plots. 
+qiime taxa barplot \
+  --i-table table-no-high.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file MergedMD.tsv \
+  --o-visualization taxa-bar-plots.qzv
+
+
+
+
+
   
 
