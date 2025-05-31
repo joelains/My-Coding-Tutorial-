@@ -117,7 +117,7 @@ qiime emperor plot \
   --m-metadata-file MergedMD.tsv \
   --o-visualization unweighted-unifrac-emperor.qzv
   
-# Step 6: Taxonomic analysis
+# Step 6: Assigning Taxonomy 
 Now we'll see the samples' taxonomic composition and relate it back to the metadata. Sadly, due a limited RAM memory, i used a pre-trained Naive Bayes by Greengenes 13_8 which have been trimmed to inlclude the v4 region (my sequences were v3-v4). Fortunately results were reliable. 
 wget -O 'gg-13-8-99-515-806-nb-classifier.qza' \
   'https://moving-pictures-tutorial.readthedocs.io/en/latest/data/moving-pictures/gg-13-8-99-515-806-nb-classifier.qza'
@@ -136,10 +136,24 @@ qiime taxa barplot \
   --i-taxonomy taxonomy.qza \
   --m-metadata-file MergedMD.tsv \
   --o-visualization taxa-bar-plots.qzv
-
-
-
-
-
   
+# Step 7: Differential Abundance Test
+Using ANCOM-BC to test for abundant features across the groups while implementing a bias correction. For this research, we are only focusing on Crohn's vs GERD samples to view the relationships of the two different microbiomes (gut v espohagus).
+
+qiime taxa collapse \
+  --i-table table-no-high.qza \
+  --i-taxonomy taxonomy.qza \
+  --p-level 6 \
+  --o-collapsed-table genus-table-crohns-gerd.qza
+qiime composition ancombc \
+  --i-table genus-table-crohns-gerd.qza \
+  --m-metadata-file MergedMD.tsv \
+  --p-formula group \
+  --o-differentials l6-ancombc-subject.qza
+qiime composition da-barplot \
+  --i-data l6-ancombc-subject.qza \
+  --p-significance-threshold 0.001 \
+  --o-visualization l6-da-barplot-subject.qzv
+
+  # END
 
