@@ -131,6 +131,7 @@ qiime metadata tabulate \
   --o-visualization taxonomy.qzv
 
 Next, we can view the composition of our samples by generating bar plots. 
+
 qiime taxa barplot \
   --i-table table-no-high.qza \
   --i-taxonomy taxonomy.qza \
