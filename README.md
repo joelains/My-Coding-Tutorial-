@@ -146,11 +146,13 @@ qiime taxa collapse \
   --i-taxonomy taxonomy.qza \
   --p-level 6 \
   --o-collapsed-table genus-table-crohns-gerd.qza
+
 qiime composition ancombc \
   --i-table genus-table-crohns-gerd.qza \
   --m-metadata-file MergedMD.tsv \
   --p-formula group \
   --o-differentials l6-ancombc-subject.qza
+
 qiime composition da-barplot \
   --i-data l6-ancombc-subject.qza \
   --p-significance-threshold 0.001 \
