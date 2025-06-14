@@ -139,13 +139,18 @@ qiime taxa barplot \
   --o-visualization taxa-bar-plots.qzv
   
 # Step 7: Differential Abundance Test
-Using ANCOM-BC to test for abundant features across the groups while implementing a bias correction. For this research, we are only focusing on Crohn's vs GERD samples to view the relationships of the two different microbiomes (gut v espohagus).
+Using ANCOM-BC to test for abundant features across the groups while implementing a bias correction. For this research, we are only focusing on Crohn's vs GERD samples to view the relationships of the two different microbiomes (gut v esophagus).
 
 qiime taxa collapse \
   --i-table table-no-high.qza \
   --i-taxonomy taxonomy.qza \
   --p-level 6 \
   --o-collapsed-table genus-table-crohns-gerd.qza
+
+qiime metadata filter
+--m-metadata-file MergedMD.tsv \
+--p-where "[group] IN ('crohns', 'gerd')" \
+--o-filtered-table MergedMD.tsv 
 
 qiime composition ancombc \
   --i-table genus-table-crohns-gerd.qza \
